@@ -6,7 +6,7 @@ var async = require('async');
 
 router.get('/', function (req, res, next) {
     res.render('memo', {
-        "title": 'AngularJS Grid Test'
+        "title": 'Memo'
     });
 });
 
@@ -27,12 +27,14 @@ router.post('/complete', function (req, res, next) {
                 if (err) {
                     throw err;
                 } else {
-                    req.flash('success', 'Comment Added');
-                    res.location('/memo');
-                    res.redirect('/memo');
+                    // req.flash('success', 'Comment Added');
+                    // res.location('/memo');
+                    // res.redirect('/memo');
+                    searchHandler(req, res, next);
                 }
             }
             );
+    
 });
 
 router.post('/cancelComplete', function (req, res, next) {
@@ -52,9 +54,10 @@ router.post('/cancelComplete', function (req, res, next) {
                 if (err) {
                     throw err;
                 } else {
-                    req.flash('success', 'Comment Added');
-                    res.location('/memo');
-                    res.redirect('/memo');
+                    // req.flash('success', 'Comment Added');
+                    // res.location('/memo');
+                    // res.redirect('/memo');
+                    searchHandler(req, res, next);
                 }
             }
             );
@@ -102,20 +105,26 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
 }
 
 router.post('/search', function (req, res, next) {
+    searchHandler(req, res, next);
+});
+
+function searchHandler(req, res, next) {
     var searchText = req.body.searchText === undefined ? '' : req.body.searchText;
     var pageNo = req.body.pageNo === undefined ? 1 : req.body.pageNo;
     var searchTags = req.body.searchTags === undefined ? 'All' : req.body.searchTags;
     var completeYn = req.body.completeYn === undefined ? 'y' : req.body.completeYn;    
     doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn);
-});
-
+}
 
 router.post('/save', function (req, res, next) {
     // get form values
     var selContents = req.body.sel_contents;
     var selTags = req.body.sel_tags;
     var selId = req.body.sel_id;
-
+    
+    var selDueDate = req.body.sel_due_date;
+    var selNoticeBool = req.body.sel_notice_bool;
+    
     var db = req.db;
     var test_cols = db.get('memo');
 
@@ -124,7 +133,9 @@ router.post('/save', function (req, res, next) {
             "contents": selContents,
             "tags": selTags,
             "reg_date": new Date(),
-            "edit_date": new Date()
+            "edit_date": new Date(),
+            "due_date": selDueDate,
+            "notice_bool": selNoticeBool == "on" ? "true" : "false"
         }, function (err, test_cols) {
             if (err) {
                 res.send('There was an issue submitting the post');
@@ -132,6 +143,7 @@ router.post('/save', function (req, res, next) {
                 req.flash('success', 'Post Submitted');
                 res.location('/memo');
                 res.redirect('/memo');
+                // searchHandler(req, res, next);
             }
         });
     } else {
@@ -143,7 +155,9 @@ router.post('/save', function (req, res, next) {
                     "contents": selContents,
                     "tags": selTags,
                     "reg_date": new Date(),
-                    "edit_date": new Date()
+                    "edit_date": new Date(),
+                    "due_date": selDueDate,
+                    "notice_bool": selNoticeBool == "on" ? true : false
                 }
             },
             function (err, doc) {
@@ -151,10 +165,11 @@ router.post('/save', function (req, res, next) {
                     throw err;
                 } else {
                     req.flash('success', 'Comment Added');
-                    // res.location('/posts/show/'+selId);
-                    // res.redirect('/posts/show/'+selId);
+                    // // res.location('/posts/show/'+selId);
+                    // // res.redirect('/posts/show/'+selId);
                     res.location('/memo');
                     res.redirect('/memo');
+                    // searchHandler(req, res, next);
                 }
             }
             );

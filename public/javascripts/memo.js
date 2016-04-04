@@ -54,11 +54,12 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
     $scope.completeClick = function () {
         var ctrUrl = baseUrl + '/complete';
 
-        var dataObj = {};
+        var dataObj = returnSearchCriteria();
         addDataObj(jQuery, dataObj, "sel_id", $scope.sel_id);
 
         $http.post(ctrUrl, dataObj).success(function (returnData) {
-            $scope.searchClick();
+            $scope.cancleClick();
+            searchResultHandler(returnData);
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
@@ -68,20 +69,19 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
     $scope.cancelCompletionClick = function () {
         var ctrUrl = baseUrl + '/cancelComplete';
 
-        var dataObj = {};
+        var dataObj = returnSearchCriteria();
         addDataObj(jQuery, dataObj, "sel_id", $scope.sel_id);
 
         $http.post(ctrUrl, dataObj).success(function (returnData) {
-            $scope.searchClick();                
+            $scope.cancleClick();
+            searchResultHandler(returnData);             
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
         
     }
 
-    function searchHanlder() {
-        var ctrUrl = baseUrl + '/search';
-
+    function returnSearchCriteria() {
         var dataObj = {};
         addDataObj(jQuery, dataObj, "searchText", $scope.searchText);
         if($scope.searchTag != 'All') {
@@ -89,10 +89,19 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
         }
         addDataObj(jQuery, dataObj, "completeYn", $scope.completeBool == true ? 'n' : 'y');
         addDataObj(jQuery, dataObj, "pageNo", $scope.curPage);
+        return dataObj;
+    }
 
-        $http.post(ctrUrl, dataObj).success(function (returnData) {
-            $scope.test_cols = returnData.test_cols;
-            $scope.keywords = returnData.keywords;
+    function searchResultHandler(returnData) {
+        $scope.test_cols = returnData.test_cols;
+        $scope.keywords = returnData.keywords;
+    }
+
+    function searchHanlder() {
+        var ctrUrl = baseUrl + '/search';
+
+        $http.post(ctrUrl, returnSearchCriteria()).success(function (returnData) {
+            searchResultHandler(returnData);
             
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
@@ -114,7 +123,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
         $scope.sel_contents = '';
         $scope.sel_tags = '';
         $scope.sel_id = '';
-        $scope.dp_from = formattedDate(subtractDate(new Date(), 0));
+        $scope.sel_due_date = formattedDate(subtractDate(new Date(), 0));
     }
 
     $scope.rowClick = function (idx) {
@@ -126,6 +135,9 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
             $scope.sel_contents = $scope.test_cols[idx].contents;
             $scope.sel_tags = $scope.test_cols[idx].tags;
             $scope.sel_id = $scope.test_cols[idx]._id;
+            $scope.sel_notice_bool = $scope.test_cols[idx].notice_bool;
+            $scope.sel_due_date = $scope.test_cols[idx].due_date;
+
             if($scope.test_cols[idx].complete == 'y') {
                 $scope.completeButtonBool = false;
             } else {

@@ -15,7 +15,7 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 var flash = require('connect-flash');
 
-var db =require('monk')('admin:carter55@jmbox.myqnapcloud.com:27018/memo');
+var db =require('monk')('');
 
 var app = express();
 
