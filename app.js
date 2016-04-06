@@ -15,7 +15,7 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 var flash = require('connect-flash');
 
-var db =require('monk')('');
+var db =require('monk')('admin:carter55@jmbox.myqnapcloud.com:27018/memo');
 
 var app = express();
 
@@ -49,6 +49,7 @@ app.use(session({
 var routes = require('./routes/index');
 var about = require('./routes/about');
 var memo = require('./routes/memo');
+var checklist = require('./routes/checklist');
 
 // Passport
 app.use(passport.initialize());
@@ -85,6 +86,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/about', about);
 app.use('/memo', memo);
+app.use('/checklist', checklist);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

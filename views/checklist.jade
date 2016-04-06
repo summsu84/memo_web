@@ -6,7 +6,7 @@ block content
     script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js')
     script(src='/javascripts/jquery-ui.custom.min.js')
     link(rel='stylesheet', href='/stylesheets/jquery-ui.custom.css')
-    .container(ng-app="app_memo", ng-controller="ctr_memo", ng-cloak='')
+    .container(ng-app="app_checklist", ng-controller="ctr_checklist", ng-cloak='')
         .row
             .col-md-12
                 label
@@ -23,7 +23,7 @@ block content
                                 input(type="checkbox", ng-model="completeBool") 
                                 |&nbsp;exclude complete&nbsp;
                         input.btn.btn-default(type='button', value='Search', ng-click='searchClick()')
-                        input.btn.btn-default(type='button',value='New post', ng-click='newPostClick()')                       
+                        input.btn.btn-default(type='button',value='New Checklist', ng-click='newPostClick()')                       
         br
         .row
             .col-md-12
@@ -36,38 +36,67 @@ block content
                     table.table.mytable
                         thead
                             th #
-                            th Contents
+                            th Title
                             th Tags
                             th Edit date
                         tbody
                             tr(ng-repeat="item in test_cols", style="cursor:pointer", ng-click='rowClick($index)')
                                 td(id='col_index_{{$index}}') {{$index + 1}}
-                                td(id='col_contents_{{$index}}') {{item.contents}}
+                                td(id='col_title_{{$index}}') {{item.title}}
                                 td(id='col_tags_{{$index}}') 
                                     span.badge {{item.tags}}
                                 td(id='col_date_{{$index}}') {{item.edit_date}}
-        form.form-inline(method='post', action='/memo/next')
+        form.form-inline(method='post', action='/checklist/next')
             .form-group
                 .row
                     .col-md-12
                         input.btn.btn-default(type='button',value='Next...', ng-click='nextClick()')
         br
-        form.form-inline(method='post', action='/memo/save', ng-show='editViewBool')
+        form.form-inline(method='post', action='/checklist/save', ng-show='editViewBool')
             .form-group
                 .row(id='id_editComp')
                     .col-md-12
-                        label Contents: &nbsp
-                        textarea.form-control(rows="5", id='id_sel_contents', name='sel_contents', ng-model='sel_contents', style="width: 100%")
+                        label Title: &nbsp
+                        input.form-control(id='id_sel_title', name='sel_title', type='text', ng-model='sel_title', style="width: 100%")
+                    
+                    
+                    .col-md-12
+                        .table-responsive
+                            table.table.mytable
+                                thead
+                                    th #
+                                    th Due date
+                                    th Description
+                                    th Done date
+                                    th 
+                                tbody
+                                    tr(ng-repeat="item in chklstDtl")
+                                        td {{$index + 1}}
+                                        td
+                                            input.date_picker.form-f21(style="width: 100%", type='text', ng-model='item.due_date', placeholder='mm/dd/yyyy', ng-disabled='{{item.done_bool}}')
+                                        td
+                                            input.form-control(type='text', ng-model='item.desc', style="height: 28px", ng-disabled='{{item.done_bool}}')
+                                        td {{item.done_date}}
+                                        td 
+                                            input.btn.btn-default(type='button',value='Done', ng-hide='item.done_bool', ng-click="completeChklst($index)")                    
                     .col-md-12        
                         label Tags: &nbsp 
                         input.form-control(id='id_sel_tags', name='sel_tags', type='text', ng-model='sel_tags', style="width: 100%")
                     .col-md-12
-                        label Due date: &nbsp 
-                        input#inp_date.form-f21(type='text', ng-model='sel_due_date', name='sel_due_date', placeholder='mm/dd/yyyy')
+                        label Start date: &nbsp 
+                        input.date_picker.form-f21(type='text', ng-model='sel_start_date', name='sel_start_date', placeholder='mm/dd/yyyy', ng-show='isItNew')
+                        input.form-f21(type='text', ng-model='sel_start_date', ng-hide='isItNew', disabled='true')
                         .checkbox
                             label
                                 input(type="checkbox", ng-model="sel_notice_bool", name='sel_notice_bool') 
-                                |&nbsp;use notice
+                                |&nbsp;use notice&nbsp;&nbsp;
+                        label Interval: &nbsp;
+                            input.form-f21(type='text', name='sel_interval_val', ng-model='sel_interval_val', style="width: 30px")
+                            select(name="sel_interval_unit", ng-model="sel_interval_unit")
+                                option(value="day") day
+                                option(value="week") week
+                                option(value="month") month
+                                option(value="year") year
                     .col-md-12
                         input.btn.btn-default(name='submit',type='submit',value='Save')
                         input.btn.btn-default(type='button',value='Complete', ng-click='completeClick()', ng-show='completeButtonBool')
@@ -75,4 +104,4 @@ block content
                         input.btn.btn-default(type='button',value='Cancel', ng-click='cancleClick()')
                         input.form-control(name='sel_id', type='text', ng-model='sel_id', ng-hide='true')
     
-    script(src='/javascripts/memo.js')
+    script(src='/javascripts/checklist.js')
