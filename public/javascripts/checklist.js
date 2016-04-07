@@ -146,13 +146,14 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
         $scope.isItNew = true;
     }
 
-    $scope.completeChklst = function(idx) {
+    $scope.completeChklst = function(idx, dueDate) {
         
         var ctrUrl = baseUrl + '/chklstDone';
         var dataObj = {};
         addDataObj(jQuery, dataObj, "sel_id", $scope.sel_id);
         addDataObj(jQuery, dataObj, "dtl_id", $scope.chklstDtl[idx]._id);
         
+        addDataObj(jQuery, dataObj, "sel_due_date", dueDate);
         addDataObj(jQuery, dataObj, "sel_interval_val", $scope.sel_interval_val);
         addDataObj(jQuery, dataObj, "sel_interval_unit", $scope.sel_interval_unit);
 
