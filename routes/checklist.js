@@ -132,7 +132,7 @@ router.post('/searchDetail', function (req, res, next) {
     var searchQeury;
     var _id = req.body.chklst_id === undefined ? '' : req.body.chklst_id;
     var objectId = new ObjectID(_id);
-    searchQeury = { "chklst_id": objectId, 'reg_id': res.locals.user };
+    searchQeury = { "chklst_id": objectId, 'reg_id': req.user.name };
 
     test_cols.find(searchQeury, { sort: { done_bool: 1, due_date: -1 }, limit: 3 },
         function (err, test_cols) {
@@ -150,21 +150,21 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
     var searchQeury;
     if (searchTags != 'All') {
         if (completeYn == 'y') {
-            searchQeury = { "title": { "$regex": searchText }, "tags": searchTags, 'reg_id': res.locals.user };
+            searchQeury = { "title": { "$regex": searchText }, "tags": searchTags, 'reg_id': req.user.name };
         } else {
-            searchQeury = { "complete": { "$ne": 'y' }, "title": { "$regex": searchText }, "tags": searchTags, 'reg_id': res.locals.user };
+            searchQeury = { "complete": { "$ne": 'y' }, "title": { "$regex": searchText }, "tags": searchTags, 'reg_id': req.user.name };
         }
     } else {
         if (completeYn == 'y') {
-            searchQeury = { "title": { "$regex": searchText }, 'reg_id': res.locals.user };
+            searchQeury = { "title": { "$regex": searchText }, 'reg_id': req.user.name };
         } else {
-            searchQeury = { "complete": { "$ne": 'y' }, "title": { "$regex": searchText }, 'reg_id': res.locals.user };
+            searchQeury = { "complete": { "$ne": 'y' }, "title": { "$regex": searchText }, 'reg_id': req.user.name };
         }
     }
 
     async.parallel([
         function (callback) {
-            test_cols.distinct('tags', {'reg_id': res.locals.user}, function (err, categories) {
+            test_cols.distinct('tags', {'reg_id': req.user.name}, function (err, categories) {
                 callback(null, categories.sort());
             });
         },
@@ -240,7 +240,7 @@ router.post('/chklstDone', function (req, res, next) {
                 "due_date": convertDateFormat(calculateDate(new Date(selDueDate), selIntervalUnit, selIntervalVal * 1)),
                 "reg_date": new Date(),
                 "done_bool": false,
-                'reg_id': res.locals.user
+                'reg_id': req.user.name
             }, function (err, test_cols) {
                 if (err) {
                     res.send('There was an issue submitting the post');
@@ -254,7 +254,7 @@ router.post('/chklstDone', function (req, res, next) {
         }
     ], function (err, results) {
 
-        checklistDtl.find({ chklst_id: ObjectID(selId), 'reg_id': res.locals.user }, { sort: { done_bool: 1, due_date: -1 }, limit: 3 },
+        checklistDtl.find({ chklst_id: ObjectID(selId), 'reg_id': req.user.name }, { sort: { done_bool: 1, due_date: -1 }, limit: 3 },
             function (err, test_cols) {
                 res.jsonp({
                     "chklstDtl": test_cols
@@ -294,7 +294,7 @@ router.post('/save', function (req, res, next) {
                     "interval_val": selIntervalVal,
                     "interval_unit": selIntervalUnit,
                     "complete" : "n",
-                    'reg_id': res.locals.user
+                    'reg_id': req.user.name
                 }, function (err, doc) {
                     if (err) {
                         res.send('There was an issue submitting the post');
@@ -336,7 +336,7 @@ router.post('/save', function (req, res, next) {
                 "due_date": selStartDate,
                 "reg_date": new Date(),
                 "done_bool": false,
-                'reg_id': res.locals.user
+                'reg_id': req.user.name
             }, function (err, test_cols) {
                 if (err) {
                     res.send('There was an issue submitting the post');

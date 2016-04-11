@@ -76,21 +76,21 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
     var searchQeury;
     if(searchTags != 'All') {
         if(completeYn == 'y') {
-            searchQeury = {"contents": { "$regex": searchText }, "tags": searchTags };
+            searchQeury = {"contents": { "$regex": searchText }, "tags": searchTags, 'reg_id': req.user.name };
         } else {
-            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText }, "tags": searchTags };
+            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText }, "tags": searchTags, 'reg_id': req.user.name };
         }
     } else {
         if(completeYn == 'y') {
-            searchQeury = {"contents": { "$regex": searchText } };
+            searchQeury = {"contents": { "$regex": searchText }, 'reg_id': req.user.name };
         } else {
-            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText } };
+            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText }, 'reg_id': req.user.name };
         }
     }
 
     async.parallel([
         function(callback) {
-            test_cols.distinct('tags', function (err, categories) {
+            test_cols.distinct('tags', {'reg_id': req.user.name}, function (err, categories) {
                 callback(null, categories.sort());
             });
         },
@@ -143,7 +143,8 @@ router.post('/save', function (req, res, next) {
             "edit_date": new Date(),
             "due_date": selDueDate,
             "notice_bool": selNoticeBool == "on" ? true : false,
-            "complete" : "n"
+            "complete" : "n",
+            'reg_id': req.user.name
         }, function (err, test_cols) {
             if (err) {
                 res.send('There was an issue submitting the post');
