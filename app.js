@@ -14,8 +14,9 @@ var LocalStrategy = require('passport-local').Strategy;
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var flash = require('connect-flash');
+var config = require('./config.json');
 
-var db =require('monk')('');
+var db =require('monk')(config.db_connection_url);
 
 var app = express();
 
