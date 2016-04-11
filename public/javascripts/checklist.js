@@ -5,6 +5,7 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
     var baseUrl = '/checklist';
 
     $scope.curPage = 1;
+    $scope.perPage = 5;
     $scope.completeBool = true;
 
     $scope.editViewBool = false;
@@ -38,6 +39,12 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
             date.setDate(date.getDate() - sub);
         }
         return date;
+    }
+
+    $scope.prevClick = function() {
+        $scope.cancleClick();
+        $scope.curPage = $scope.curPage - 1;
+        searchHanlder();
     }
 
     $scope.searchClick = function (searchTag) {

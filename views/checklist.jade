@@ -41,7 +41,7 @@ block content
                             th Edit date
                         tbody
                             tr(ng-repeat="item in test_cols", style="cursor:pointer", ng-click='rowClick($index)')
-                                td(id='col_index_{{$index}}') {{$index + 1}}
+                                td(id='col_index_{{$index}}') {{((curPage - 1) * perPage) + $index + 1}}
                                 td(id='col_title_{{$index}}') {{item.title}}
                                 td(id='col_tags_{{$index}}')
                                     span.badge {{item.tags}}
@@ -50,6 +50,7 @@ block content
             .form-group
                 .row
                     .col-md-12
+                        input.btn.btn-default(type='button',value='Previous...', ng-click='prevClick()', ng-show='curPage != 1')
                         input.btn.btn-default(type='button',value='Next...', ng-click='nextClick()')
         br
         form.form-inline(method='post', action='/checklist/save', ng-show='editViewBool')
@@ -78,7 +79,7 @@ block content
                                             input.form-control(type='text', ng-model='item.desc', style="height: 28px", ng-disabled='{{item.done_bool}}')
                                         td {{item.done_date}}
                                         td
-                                            input.btn.btn-default(type='button',value='Done', ng-hide='item.done_bool', ng-click="completeChklst($index, item.due_date, item.desc)")                    
+                                            input.btn.btn-default(type='button',value='Done', ng-hide='item.done_bool', ng-click="completeChklst($index, item.due_date, item.desc)")
                     .col-md-12
                         label Tags: &nbsp
                         input.form-control(id='id_sel_tags', name='sel_tags', type='text', ng-model='sel_tags', style="width: 100%")
