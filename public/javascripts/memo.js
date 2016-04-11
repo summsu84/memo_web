@@ -5,6 +5,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
     var baseUrl = '/memo';
 
     $scope.curPage = 1;
+    $scope.perPage = 5;
     $scope.completeBool = true;
 
     $scope.editViewBool = false;
@@ -50,7 +51,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
         $scope.curPage = 1;
         searchHanlder();
     }
-    
+
     $scope.completeClick = function () {
         var ctrUrl = baseUrl + '/complete';
 
@@ -63,9 +64,9 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
-        
+
     }
-    
+
     $scope.cancelCompletionClick = function () {
         var ctrUrl = baseUrl + '/cancelComplete';
 
@@ -74,11 +75,11 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
 
         $http.post(ctrUrl, dataObj).success(function (returnData) {
             $scope.cancleClick();
-            searchResultHandler(returnData);             
+            searchResultHandler(returnData);
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
-        
+
     }
 
     function returnSearchCriteria() {
@@ -102,12 +103,18 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
 
         $http.post(ctrUrl, returnSearchCriteria()).success(function (returnData) {
             searchResultHandler(returnData);
-            
+
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
     }
 
+    $scope.prevClick = function() {
+        $scope.cancleClick();
+        $scope.curPage = $scope.curPage - 1;
+        searchHanlder();
+    }
+    
     $scope.nextClick = function () {
         $scope.cancleClick();
         if ($scope.test_cols.length == 0) {
