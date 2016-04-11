@@ -73,7 +73,7 @@ function convertDateFormat(date) {
 
 }
 
-router.post('/complete', function (req, res, next) {
+router.post('/complete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
@@ -100,7 +100,7 @@ router.post('/complete', function (req, res, next) {
 
 });
 
-router.post('/cancelComplete', function (req, res, next) {
+router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
@@ -126,7 +126,7 @@ router.post('/cancelComplete', function (req, res, next) {
         );
 });
 
-router.post('/searchDetail', function (req, res, next) {
+router.post('/searchDetail', ensureAuthenticated, function (req, res, next) {
     var db = req.db;
     var test_cols = db.get('checklistDtl');
     var searchQeury;
@@ -185,7 +185,7 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
 
 }
 
-router.post('/search', function (req, res, next) {
+router.post('/search', ensureAuthenticated, function (req, res, next) {
     searchHandler(req, res, next);
 });
 
@@ -199,7 +199,7 @@ function searchHandler(req, res, next) {
 
 
 
-router.post('/chklstDone', function (req, res, next) {
+router.post('/chklstDone', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
     var dtlId = req.body.dtl_id;
 
@@ -265,7 +265,7 @@ router.post('/chklstDone', function (req, res, next) {
 
 });
 
-router.post('/save', function (req, res, next) {
+router.post('/save', ensureAuthenticated, function (req, res, next) {
     // get form values
     var selTitle = req.body.sel_title;
     var selTags = req.body.sel_tags;

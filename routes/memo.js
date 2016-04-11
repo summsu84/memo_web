@@ -17,7 +17,7 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/users/login');
 }
 
-router.post('/complete', function (req, res, next) {
+router.post('/complete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
@@ -44,7 +44,7 @@ router.post('/complete', function (req, res, next) {
 
 });
 
-router.post('/cancelComplete', function (req, res, next) {
+router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
@@ -111,7 +111,7 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
 
 }
 
-router.post('/search', function (req, res, next) {
+router.post('/search', ensureAuthenticated, function (req, res, next) {
     searchHandler(req, res, next);
 });
 
@@ -123,7 +123,7 @@ function searchHandler(req, res, next) {
     doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn);
 }
 
-router.post('/save', function (req, res, next) {
+router.post('/save', ensureAuthenticated, function (req, res, next) {
     // get form values
     var selContents = req.body.sel_contents;
     var selTags = req.body.sel_tags;
