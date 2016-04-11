@@ -83,6 +83,11 @@ app.use(function(req, res, next) {
    next();
 });
 
+app.get('*', function(req, res, next) {
+  res.locals.user = req.user || null;
+  next();
+});
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 

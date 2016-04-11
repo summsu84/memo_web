@@ -4,11 +4,18 @@ var perPage = 5;
 var url = require('url');
 var async = require('async');
 
-router.get('/', function (req, res, next) {
+router.get('/', ensureAuthenticated, function (req, res, next) {
     res.render('memo', {
         "title": 'Memo'
     });
 });
+
+function ensureAuthenticated(req, res, next) {
+  if(req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/users/login');
+}
 
 router.post('/complete', function (req, res, next) {
     var selId = req.body.sel_id;

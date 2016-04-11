@@ -6,11 +6,18 @@ var async = require('async');
 
 var ObjectID = require('mongodb').ObjectID;
 
-router.get('/', function (req, res, next) {
+router.get('/', ensureAuthenticated, function (req, res, next) {
     res.render('checklist', {
         "title": 'checklist'
     });
 });
+
+function ensureAuthenticated(req, res, next) {
+  if(req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/users/login');
+}
 
 function addDays(date, days) {
     var result = new Date(date);
@@ -125,7 +132,7 @@ router.post('/searchDetail', function (req, res, next) {
     var searchQeury;
     var _id = req.body.chklst_id === undefined ? '' : req.body.chklst_id;
     var objectId = new ObjectID(_id);
-    searchQeury = { "chklst_id": objectId };
+    searchQeury = { "chklst_id": objectId, 'reg_id': res.locals.user };
 
     test_cols.find(searchQeury, { sort: { done_bool: 1, due_date: -1 }, limit: 3 },
         function (err, test_cols) {
@@ -143,21 +150,21 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
     var searchQeury;
     if (searchTags != 'All') {
         if (completeYn == 'y') {
-            searchQeury = { "title": { "$regex": searchText }, "tags": searchTags };
+            searchQeury = { "title": { "$regex": searchText }, "tags": searchTags, 'reg_id': res.locals.user };
         } else {
-            searchQeury = { "complete": { "$ne": 'y' }, "title": { "$regex": searchText }, "tags": searchTags };
+            searchQeury = { "complete": { "$ne": 'y' }, "title": { "$regex": searchText }, "tags": searchTags, 'reg_id': res.locals.user };
         }
     } else {
         if (completeYn == 'y') {
-            searchQeury = { "title": { "$regex": searchText } };
+            searchQeury = { "title": { "$regex": searchText }, 'reg_id': res.locals.user };
         } else {
-            searchQeury = { "complete": { "$ne": 'y' }, "title": { "$regex": searchText } };
+            searchQeury = { "complete": { "$ne": 'y' }, "title": { "$regex": searchText }, 'reg_id': res.locals.user };
         }
     }
 
     async.parallel([
         function (callback) {
-            test_cols.distinct('tags', function (err, categories) {
+            test_cols.distinct('tags', {'reg_id': res.locals.user}, function (err, categories) {
                 callback(null, categories.sort());
             });
         },
@@ -232,7 +239,8 @@ router.post('/chklstDone', function (req, res, next) {
                 "chklst_id": ObjectID(selId),
                 "due_date": convertDateFormat(calculateDate(new Date(selDueDate), selIntervalUnit, selIntervalVal * 1)),
                 "reg_date": new Date(),
-                "done_bool": false
+                "done_bool": false,
+                'reg_id': res.locals.user
             }, function (err, test_cols) {
                 if (err) {
                     res.send('There was an issue submitting the post');
@@ -246,7 +254,7 @@ router.post('/chklstDone', function (req, res, next) {
         }
     ], function (err, results) {
 
-        checklistDtl.find({ chklst_id: ObjectID(selId) }, { sort: { done_bool: 1, due_date: -1 }, limit: 3 },
+        checklistDtl.find({ chklst_id: ObjectID(selId), 'reg_id': res.locals.user }, { sort: { done_bool: 1, due_date: -1 }, limit: 3 },
             function (err, test_cols) {
                 res.jsonp({
                     "chklstDtl": test_cols
@@ -285,7 +293,8 @@ router.post('/save', function (req, res, next) {
                     "notice_bool": selNoticeBool == "on" ? true : false,
                     "interval_val": selIntervalVal,
                     "interval_unit": selIntervalUnit,
-                    "complete" : "n"
+                    "complete" : "n",
+                    'reg_id': res.locals.user
                 }, function (err, doc) {
                     if (err) {
                         res.send('There was an issue submitting the post');
@@ -326,7 +335,8 @@ router.post('/save', function (req, res, next) {
                 "chklst_id": results[0]._id,
                 "due_date": selStartDate,
                 "reg_date": new Date(),
-                "done_bool": false
+                "done_bool": false,
+                'reg_id': res.locals.user
             }, function (err, test_cols) {
                 if (err) {
                     res.send('There was an issue submitting the post');
