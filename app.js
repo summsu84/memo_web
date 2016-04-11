@@ -61,14 +61,14 @@ app.use(expressValidator({
         var namespace = param.split('.'),
         root = namespace.shift(),
         formParam = root;
-        
+
         while(namespace.length) {
             formParam += '[' + namespace.shift() + ']';
         }
         return {
           param: formParam,
           msg: msg,
-          value: value  
+          value: value
         };
     }
 }));
@@ -77,7 +77,7 @@ app.use(expressValidator({
 app.use(flash());
 app.use(function(req, res, next) {
    res.locals.messages = require('express-messages')(req, res);
-   next(); 
+   next();
 });
 
 app.use(cookieParser());

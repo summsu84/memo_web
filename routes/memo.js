@@ -34,7 +34,7 @@ router.post('/complete', function (req, res, next) {
                 }
             }
             );
-    
+
 });
 
 router.post('/cancelComplete', function (req, res, next) {
@@ -72,7 +72,7 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
             searchQeury = {"contents": { "$regex": searchText }, "tags": searchTags };
         } else {
             searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText }, "tags": searchTags };
-        }            
+        }
     } else {
         if(completeYn == 'y') {
             searchQeury = {"contents": { "$regex": searchText } };
@@ -101,7 +101,7 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
                         'searchText': searchText
                     });
     });
-    
+
 }
 
 router.post('/search', function (req, res, next) {
@@ -112,7 +112,7 @@ function searchHandler(req, res, next) {
     var searchText = req.body.searchText === undefined ? '' : req.body.searchText;
     var pageNo = req.body.pageNo === undefined ? 1 : req.body.pageNo;
     var searchTags = req.body.searchTags === undefined ? 'All' : req.body.searchTags;
-    var completeYn = req.body.completeYn === undefined ? 'y' : req.body.completeYn;    
+    var completeYn = req.body.completeYn === undefined ? 'y' : req.body.completeYn;
     doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn);
 }
 
@@ -121,10 +121,10 @@ router.post('/save', function (req, res, next) {
     var selContents = req.body.sel_contents;
     var selTags = req.body.sel_tags;
     var selId = req.body.sel_id;
-    
+
     var selDueDate = req.body.sel_due_date;
     var selNoticeBool = req.body.sel_notice_bool;
-    
+
     var db = req.db;
     var test_cols = db.get('memo');
 
@@ -135,7 +135,8 @@ router.post('/save', function (req, res, next) {
             "reg_date": new Date(),
             "edit_date": new Date(),
             "due_date": selDueDate,
-            "notice_bool": selNoticeBool == "on" ? "true" : "false"
+            "notice_bool": selNoticeBool == "on" ? true : false,
+            "complete" : "n"
         }, function (err, test_cols) {
             if (err) {
                 res.send('There was an issue submitting the post');

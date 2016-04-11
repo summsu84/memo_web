@@ -10,7 +10,7 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
     $scope.editViewBool = false;
 
     $document.ready(function () {
-        
+
         $( ".date_picker" ).datepicker({
             defaultDate: "+1w",
             changeMonth: true,
@@ -18,7 +18,7 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
             numberOfMonths: 1,
             dateFormat    : "mm/dd/yy"
         });
-        
+
         $scope.searchClick();
     });
 
@@ -50,7 +50,7 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
         $scope.curPage = 1;
         searchHanlder();
     }
-    
+
     $scope.completeClick = function () {
         var ctrUrl = baseUrl + '/complete';
 
@@ -63,9 +63,9 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
-        
+
     }
-    
+
     $scope.cancelCompletionClick = function () {
         var ctrUrl = baseUrl + '/cancelComplete';
 
@@ -74,11 +74,11 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
 
         $http.post(ctrUrl, dataObj).success(function (returnData) {
             $scope.cancleClick();
-            searchResultHandler(returnData);             
+            searchResultHandler(returnData);
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
-        
+
     }
 
     function returnSearchCriteria() {
@@ -102,12 +102,12 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
 
         $http.post(ctrUrl, returnSearchCriteria()).success(function (returnData) {
             searchResultHandler(returnData);
-            
+
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
     }
-    
+
     $scope.searchDetailHanlder = function(idx) {
         var ctrUrl = baseUrl + '/searchDetail';
         var dataObj = {};
@@ -115,7 +115,7 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
 
         $http.post(ctrUrl, dataObj).success(function (returnData) {
             $scope.chklstDtl = returnData.chklstDtl;
-            
+
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
@@ -137,42 +137,43 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
         $scope.sel_tags = '';
         $scope.sel_id = '';
         $scope.sel_due_date = formattedDate(subtractDate(new Date(), 0));
-        
+
         $scope.sel_interval_val = "";
         $scope.sel_interval_unit = "";
-        
-        $scope.chklstDtl = {};        
-                
+
+        $scope.chklstDtl = {};
+
         $scope.isItNew = true;
     }
 
-    $scope.completeChklst = function(idx, dueDate) {
-        
+    $scope.completeChklst = function(idx, dueDate, desc) {
+
         var ctrUrl = baseUrl + '/chklstDone';
         var dataObj = {};
         addDataObj(jQuery, dataObj, "sel_id", $scope.sel_id);
         addDataObj(jQuery, dataObj, "dtl_id", $scope.chklstDtl[idx]._id);
-        
+
         addDataObj(jQuery, dataObj, "sel_due_date", dueDate);
+        addDataObj(jQuery, dataObj, "sel_desc", desc);
         addDataObj(jQuery, dataObj, "sel_interval_val", $scope.sel_interval_val);
         addDataObj(jQuery, dataObj, "sel_interval_unit", $scope.sel_interval_unit);
 
         $http.post(ctrUrl, dataObj).success(function (returnData) {
             $scope.chklstDtl = returnData.chklstDtl;
-            
+
         }).error(function (data, status, headers, config) {
             alert('error: ' + status);
         });
-        
+
     }
 
     $scope.rowClick = function (idx) {
         if ($scope.editViewBool == true && $scope.selInx == idx) {
             $scope.editViewBool = false;
-            
+
         } else {
             $scope.isItNew = false;
-            
+
             $scope.editViewBool = true;
             $scope.selInx = idx;
             $scope.sel_title = $scope.test_cols[idx].title;
@@ -180,16 +181,16 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
             $scope.sel_id = $scope.test_cols[idx]._id;
             $scope.sel_notice_bool = $scope.test_cols[idx].notice_bool;
             $scope.sel_start_date = $scope.test_cols[idx].start_date;
-            
+
             $scope.sel_interval_val = $scope.test_cols[idx].interval_val;
             $scope.sel_interval_unit = $scope.test_cols[idx].interval_unit;
-            
+
             if($scope.test_cols[idx].complete == 'y') {
                 $scope.completeButtonBool = false;
             } else {
                 $scope.completeButtonBool = true;
             }
-            
+
             $scope.searchDetailHanlder($scope.selInx);
         }
     }

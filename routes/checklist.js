@@ -18,19 +18,19 @@ function addDays(date, days) {
     return result;
 }
 
-Date.isLeapYear = function (year) { 
-    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)); 
+Date.isLeapYear = function (year) {
+    return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
 };
 
 Date.getDaysInMonth = function (year, month) {
     return [31, (Date.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
 };
 
-Date.prototype.isLeapYear = function () { 
-    return Date.isLeapYear(this.getFullYear()); 
+Date.prototype.isLeapYear = function () {
+    return Date.isLeapYear(this.getFullYear());
 };
 
-Date.prototype.getDaysInMonth = function () { 
+Date.prototype.getDaysInMonth = function () {
     return Date.getDaysInMonth(this.getFullYear(), this.getMonth());
 };
 
@@ -62,8 +62,8 @@ function zeroPad(num, places) {
 }
 
 function convertDateFormat(date) {
-    return zeroPad(date.getMonth(), 2) + '/' + zeroPad(date.getDate(), 2) + '/' + date.getFullYear()
-    
+    return zeroPad(date.getMonth() + 1, 2) + '/' + zeroPad(date.getDate(), 2) + '/' + date.getFullYear()
+
 }
 
 router.post('/complete', function (req, res, next) {
@@ -195,7 +195,8 @@ function searchHandler(req, res, next) {
 router.post('/chklstDone', function (req, res, next) {
     var selId = req.body.sel_id;
     var dtlId = req.body.dtl_id;
-    
+
+    var selDesc = req.body.sel_desc;
     var selDueDate = req.body.sel_due_date;
     var selIntervalVal = req.body.sel_interval_val;
     var selIntervalUnit = req.body.sel_interval_unit;
@@ -211,7 +212,9 @@ router.post('/chklstDone', function (req, res, next) {
                 {
                     $set: {
                         "done_bool": true,
-                        "done_date": new Date()
+                        "done_date": new Date(),
+                        "due_date": selDueDate,
+                        "desc": selDesc
                     }
                 },
                 function (err, doc) {
@@ -279,9 +282,10 @@ router.post('/save', function (req, res, next) {
                     "start_date": selStartDate,
                     "reg_date": new Date(),
                     "edit_date": new Date(),
-                    "notice_bool": selNoticeBool == "on" ? "true" : "false",
+                    "notice_bool": selNoticeBool == "on" ? true : false,
                     "interval_val": selIntervalVal,
-                    "interval_unit": selIntervalUnit
+                    "interval_unit": selIntervalUnit,
+                    "complete" : "n"
                 }, function (err, doc) {
                     if (err) {
                         res.send('There was an issue submitting the post');
