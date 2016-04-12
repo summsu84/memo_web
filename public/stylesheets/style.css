@@ -43,3 +43,14 @@ ul.error li {
     border-color: #ebccd1;
     list-style: none;
 }
+
+@media (max-width: 480px) {
+  .un {
+    display:none;
+  }
+}
+
+#id_sel_contents {
+  overflow: scroll;
+  max-height: 300px;
+}

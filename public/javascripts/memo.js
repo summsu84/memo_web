@@ -21,6 +21,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
         });
 
         $scope.searchClick();
+
     });
 
     function formattedDate(date) {
@@ -114,7 +115,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
         $scope.curPage = $scope.curPage - 1;
         searchHanlder();
     }
-    
+
     $scope.nextClick = function () {
         $scope.cancleClick();
         if ($scope.test_cols.length == 0) {
