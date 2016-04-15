@@ -69,8 +69,8 @@ function zeroPad(num, places) {
 }
 
 function convertDateFormat(date) {
-    return zeroPad(date.getMonth() + 1, 2) + '/' + zeroPad(date.getDate(), 2) + '/' + date.getFullYear()
-
+    //return zeroPad(date.getMonth() + 1, 2) + '/' + zeroPad(date.getDate(), 2) + '/' + date.getFullYear()
+    return date.getFullYear() + '-' + zeroPad(date.getMonth() + 1, 2) + '-' + zeroPad(date.getDate(), 2);
 }
 
 router.post('/complete', ensureAuthenticated, function (req, res, next) {
@@ -197,7 +197,26 @@ function searchHandler(req, res, next) {
     doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn);
 }
 
+var convertDate = function (d) {
+  var year = d.getFullYear();
+  var month = d.getMonth();
+  var date = d.getDate();
+  return year + '' +
+      ((month + '').length != 2 ? '0' + (month + '') : month + '') +
+      ((date + '').length != 2 ? '0' + (date + '') : date + '');
+}
 
+var getNextDuedate = function (d, unit, interval) {
+    var nextDueDt = new Date(d);
+    var currentDt = new Date();
+    // if(convertDate(currentDt) < convertDate(nextDueDt)) {
+    //     return null;
+    // }
+    while (convertDate(currentDt) >= convertDate(nextDueDt)) {
+        nextDueDt = calculateDate(nextDueDt, unit, interval);
+    }
+    return nextDueDt;
+}
 
 router.post('/chklstDone', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
@@ -232,12 +251,11 @@ router.post('/chklstDone', ensureAuthenticated, function (req, res, next) {
                     }
                 }
                 );
-
         },
         function (callback) {
             checklistDtl.insert({
                 "chklst_id": ObjectID(selId),
-                "due_date": convertDateFormat(calculateDate(new Date(selDueDate), selIntervalUnit, selIntervalVal * 1)),
+                "due_date": convertDateFormat(getNextDuedate(new Date(selDueDate), selIntervalUnit, selIntervalVal * 1)),
                 "reg_date": new Date(),
                 "done_bool": false,
                 'reg_id': req.user.name
@@ -249,8 +267,6 @@ router.post('/chklstDone', ensureAuthenticated, function (req, res, next) {
                 }
             }
                 );
-
-
         }
     ], function (err, results) {
 

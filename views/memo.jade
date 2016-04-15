@@ -28,7 +28,7 @@ block content
         .row
             .col-md-12
                 span.badge(style="cursor:pointer", ng-click='searchClick("All")') All
-                span.badge(style="cursor:pointer", ng-repeat="item in keywords", ng-click="searchClick(item)") {{item}}
+                span.badge(style="cursor:pointer", ng-repeat="item in keywords", ng-click="searchClick(item)", ng-class="{'selected-badge': item == selectedBadge}") {{item}}
         br
         .row
             .col-md-12
@@ -64,7 +64,7 @@ block content
                         input.form-control(id='id_sel_tags', name='sel_tags', type='text', ng-model='sel_tags', style="width: 100%")
                     .col-md-12
                         label Due date: &nbsp
-                        input#inp_date.form-f21(type='text', ng-model='sel_due_date', name='sel_due_date', placeholder='mm/dd/yyyy', style='width: 100%')
+                        input#inp_date.form-f21(type='text', ng-model='sel_due_date', name='sel_due_date', placeholder='yyyy-mm-dd', style='width: 100%')
                         .checkbox
                             label
                                 input(type="checkbox", ng-model="sel_notice_bool", name='sel_notice_bool')

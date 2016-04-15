@@ -54,3 +54,7 @@ ul.error li {
   overflow: scroll;
   max-height: 300px;
 }
+
+.selected-badge {
+  background-color: orange;
+}
