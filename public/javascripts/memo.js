@@ -89,6 +89,27 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
 
     }
 
+    $scope.savePost = function () {
+        var ctrUrl = baseUrl + '/savePost';
+        var dataObj = returnSearchCriteria();
+
+        $scope.sel_contents = $('#summernote').summernote('code');
+        addDataObj(jQuery, dataObj, "sel_title", $scope.sel_title);
+        addDataObj(jQuery, dataObj, "sel_contents", $scope.sel_contents);
+        addDataObj(jQuery, dataObj, "sel_tags", $scope.sel_tags);
+        addDataObj(jQuery, dataObj, "sel_id", $scope.sel_id);
+        addDataObj(jQuery, dataObj, "sel_due_date", $scope.sel_due_date);
+        addDataObj(jQuery, dataObj, "sel_notice_bool", $scope.sel_notice_bool);
+
+        $http.post(ctrUrl, dataObj).success(function (returnData) {
+            $scope.cancleClick();
+            searchResultHandler(returnData);
+        }).error(function (data, status, headers, config) {
+            alert('error: ' + status);
+        });
+
+    }
+
     function returnSearchCriteria() {
         var dataObj = {};
         addDataObj(jQuery, dataObj, "searchText", $scope.searchText);
@@ -135,18 +156,29 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
     $scope.newPostClick = function () {
         $scope.editViewBool = true;
         $scope.sel_contents = '';
+        $scope.sel_title = '';
         $scope.sel_tags = '';
         $scope.sel_id = '';
         $scope.sel_due_date = formattedDate(subtractDate(new Date(), 0));
+
+        $('#summernote').summernote({
+          height: 100,                 // set editor height
+          minHeight: null,             // set minimum height of editor
+          maxHeight: null,             // set maximum height of editor
+          focus: true
+        });
     }
 
     $scope.rowClick = function (idx) {
         if ($scope.editViewBool == true && $scope.selInx == idx) {
             $scope.editViewBool = false;
+            $('#summernote').summernote('destroy');
         } else {
             $scope.editViewBool = true;
             $scope.selInx = idx;
             $scope.sel_contents = $scope.test_cols[idx].contents;
+            $('#summernote').summernote('code', $scope.sel_contents);
+            $scope.sel_title = $scope.test_cols[idx].title;
             $scope.sel_tags = $scope.test_cols[idx].tags;
             $scope.sel_id = $scope.test_cols[idx]._id;
             $scope.sel_notice_bool = $scope.test_cols[idx].notice_bool;
@@ -157,11 +189,19 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
             } else {
                 $scope.completeButtonBool = true;
             }
+
+            $('#summernote').summernote({
+              height: 100,                 // set editor height
+              minHeight: null,             // set minimum height of editor
+              maxHeight: null,             // set maximum height of editor
+              focus: true
+            });
         }
     }
 
     $scope.cancleClick = function () {
         $scope.editViewBool = false;
+        $('#summernote').summernote('destroy');
     }
 
     function addDataObj(jQuery, dataObj, keyNm, keyVal) {

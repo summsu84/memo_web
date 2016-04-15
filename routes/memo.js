@@ -123,9 +123,10 @@ function searchHandler(req, res, next) {
     doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn);
 }
 
-router.post('/save', ensureAuthenticated, function (req, res, next) {
+router.post('/savePost', ensureAuthenticated, function (req, res, next) {
     // get form values
     var selContents = req.body.sel_contents;
+    var selTitle = req.body.sel_title;
     var selTags = req.body.sel_tags;
     var selId = req.body.sel_id;
 
@@ -138,6 +139,7 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
     if (selId == '') {
         test_cols.insert({
             "contents": selContents,
+            "title": selTitle,
             "tags": selTags,
             "reg_date": new Date(),
             "edit_date": new Date(),
@@ -150,9 +152,12 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
                 res.send('There was an issue submitting the post');
             } else {
                 req.flash('success', 'Post Submitted');
-                res.location('/memo');
-                res.redirect('/memo');
-                // searchHandler(req, res, next);
+                // res.jsonp({
+                //                 "error_code": 0
+                //             });
+                // res.location('/memo');
+                // res.redirect('/memo');
+                searchHandler(req, res, next);
             }
         });
     } else {
@@ -162,6 +167,7 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
             {
                 $set: {
                     "contents": selContents,
+                    "title": selTitle,
                     "tags": selTags,
                     "reg_date": new Date(),
                     "edit_date": new Date(),
@@ -174,11 +180,14 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
                     throw err;
                 } else {
                     req.flash('success', 'Comment Added');
+                    // res.jsonp({
+                    //                 "error_code": 0
+                    //             });
                     // // res.location('/posts/show/'+selId);
                     // // res.redirect('/posts/show/'+selId);
-                    res.location('/memo');
-                    res.redirect('/memo');
-                    // searchHandler(req, res, next);
+                    // res.location('/memo');
+                    // res.redirect('/memo');
+                    searchHandler(req, res, next);
                 }
             }
             );

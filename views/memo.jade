@@ -6,6 +6,10 @@ block content
     script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js')
     script(src='/javascripts/jquery-ui.custom.min.js')
     link(rel='stylesheet', href='/stylesheets/jquery-ui.custom.css')
+
+    script(src='http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.js')
+    link(rel='stylesheet', href='http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css')
+
     .container(ng-app="app_memo", ng-controller="ctr_memo", ng-cloak='')
         .row
             .col-md-12
@@ -36,13 +40,13 @@ block content
                     table.table.mytable
                         thead
                             th #
-                            th Contents
+                            th Title
                             th Tags
                             th.un Edit date
                         tbody
                             tr(ng-repeat="item in test_cols", style="cursor:pointer", ng-click='rowClick($index)')
                                 td(id='col_index_{{$index}}') {{((curPage - 1) * perPage) + $index + 1}}
-                                td(id='col_contents_{{$index}}') {{item.contents}}
+                                td(id='col_contents_{{$index}}') {{item.title}}
                                 td(id='col_tags_{{$index}}')
                                     span.badge {{item.tags}}
                                 td.un(id='col_date_{{$index}}') {{item.edit_date}}
@@ -57,8 +61,11 @@ block content
             .form-group
                 .row(id='id_editComp')
                     .col-md-12
+                        label Title: &nbsp
+                        input.form-control(id='id_sel_title', name='sel_title', type='text', ng-model='sel_title', style="width: 100%")
+                    .col-md-12
                         label Contents: &nbsp
-                        textarea.form-control(rows="5", id='id_sel_contents', name='sel_contents', ng-model='sel_contents', style="width: 100%")
+                        div(id="summernote") {{sel_contents}}
                     .col-md-12
                         label Tags: &nbsp
                         input.form-control(id='id_sel_tags', name='sel_tags', type='text', ng-model='sel_tags', style="width: 100%")
@@ -70,7 +77,7 @@ block content
                                 input(type="checkbox", ng-model="sel_notice_bool", name='sel_notice_bool')
                                 |&nbsp;use notice
                     .col-md-12
-                        input.btn.btn-default(name='submit',type='submit',value='Save')
+                        input.btn.btn-default(type='button',value='Save', ng-click='savePost()')
                         input.btn.btn-default(type='button',value='Complete', ng-click='completeClick()', ng-show='completeButtonBool')
                         input.btn.btn-default(type='button',value='Cancel Completion', ng-click='cancelCompletionClick()', ng-hide='completeButtonBool')
                         input.btn.btn-default(type='button',value='Cancel', ng-click='cancleClick()')
