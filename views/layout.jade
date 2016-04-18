@@ -45,10 +45,11 @@ html
                     if user
                       li
                         a(href='/users/logout') Logout
-        .container
-            != messages()
-            block content
-        footer
-            p &copy; 2016, All rights Reserved
+    br
+    .container
+        != messages()
+        block content
+    footer
+        p &copy; 2016, All rights Reserved
 
     script(src='/javascripts/bootstrap.js')

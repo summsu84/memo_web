@@ -8,19 +8,22 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
     $scope.perPage = 5;
     $scope.completeBool = true;
 
+    $scope.selectedBadge = '';
+
     $scope.editViewBool = false;
 
     $document.ready(function () {
 
         $( "#inp_date" ).datepicker({
-          defaultDate: "+1w",
+          defaultDate: "",
           changeMonth: true,
           changeYear: true,
           numberOfMonths: 1,
-          dateFormat    : "mm/dd/yy"
+          dateFormat    : "yy-mm-dd"
         });
 
         $scope.searchClick();
+
     });
 
     function formattedDate(date) {
@@ -29,7 +32,8 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
         var isoDate = date.toISOString();
 
         //정규 표현식으로 변환(MM/DD/YYYY)
-        result = isoDate.replace(/^(\d{4})\-(\d{2})\-(\d{2}).*$/, '$2/$3/$1');
+        //result = isoDate.replace(/^(\d{4})\-(\d{2})\-(\d{2}).*$/, '$2/$3/$1');
+        result = isoDate.replace(/^(\d{4})\-(\d{2})\-(\d{2}).*$/, '$1-$2-$3');
         return result;
     }
 
@@ -42,6 +46,9 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
     }
 
     $scope.searchClick = function (searchTag) {
+
+        $scope.selectedBadge = searchTag;
+
         $scope.cancleClick();
         if(searchTag == undefined) {
             $scope.searchTag = 'All';
@@ -72,6 +79,27 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
 
         var dataObj = returnSearchCriteria();
         addDataObj(jQuery, dataObj, "sel_id", $scope.sel_id);
+
+        $http.post(ctrUrl, dataObj).success(function (returnData) {
+            $scope.cancleClick();
+            searchResultHandler(returnData);
+        }).error(function (data, status, headers, config) {
+            alert('error: ' + status);
+        });
+
+    }
+
+    $scope.savePost = function () {
+        var ctrUrl = baseUrl + '/savePost';
+        var dataObj = returnSearchCriteria();
+
+        $scope.sel_contents = $('#summernote').summernote('code');
+        addDataObj(jQuery, dataObj, "sel_title", $scope.sel_title);
+        addDataObj(jQuery, dataObj, "sel_contents", $scope.sel_contents);
+        addDataObj(jQuery, dataObj, "sel_tags", $scope.sel_tags);
+        addDataObj(jQuery, dataObj, "sel_id", $scope.sel_id);
+        addDataObj(jQuery, dataObj, "sel_due_date", $scope.sel_due_date);
+        addDataObj(jQuery, dataObj, "sel_notice_bool", $scope.sel_notice_bool);
 
         $http.post(ctrUrl, dataObj).success(function (returnData) {
             $scope.cancleClick();
@@ -114,7 +142,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
         $scope.curPage = $scope.curPage - 1;
         searchHanlder();
     }
-    
+
     $scope.nextClick = function () {
         $scope.cancleClick();
         if ($scope.test_cols.length == 0) {
@@ -128,18 +156,29 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
     $scope.newPostClick = function () {
         $scope.editViewBool = true;
         $scope.sel_contents = '';
+        $scope.sel_title = '';
         $scope.sel_tags = '';
         $scope.sel_id = '';
         $scope.sel_due_date = formattedDate(subtractDate(new Date(), 0));
+
+        $('#summernote').summernote({
+          height: 100,                 // set editor height
+          minHeight: null,             // set minimum height of editor
+          maxHeight: null,             // set maximum height of editor
+          focus: true
+        });
     }
 
     $scope.rowClick = function (idx) {
         if ($scope.editViewBool == true && $scope.selInx == idx) {
             $scope.editViewBool = false;
+            $('#summernote').summernote('destroy');
         } else {
             $scope.editViewBool = true;
             $scope.selInx = idx;
             $scope.sel_contents = $scope.test_cols[idx].contents;
+            $('#summernote').summernote('code', $scope.sel_contents);
+            $scope.sel_title = $scope.test_cols[idx].title;
             $scope.sel_tags = $scope.test_cols[idx].tags;
             $scope.sel_id = $scope.test_cols[idx]._id;
             $scope.sel_notice_bool = $scope.test_cols[idx].notice_bool;
@@ -150,11 +189,19 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window) {
             } else {
                 $scope.completeButtonBool = true;
             }
+
+            $('#summernote').summernote({
+              height: 100,                 // set editor height
+              minHeight: null,             // set minimum height of editor
+              maxHeight: null,             // set maximum height of editor
+              focus: true
+            });
         }
     }
 
     $scope.cancleClick = function () {
         $scope.editViewBool = false;
+        $('#summernote').summernote('destroy');
     }
 
     function addDataObj(jQuery, dataObj, keyNm, keyVal) {

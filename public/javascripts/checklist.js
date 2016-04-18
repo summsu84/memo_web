@@ -10,14 +10,16 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
 
     $scope.editViewBool = false;
 
+    $scope.selectedBadge = '';
+
     $document.ready(function () {
 
         $( ".date_picker" ).datepicker({
-            defaultDate: "+1w",
+            defaultDate: "",
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
-            dateFormat    : "mm/dd/yy"
+            dateFormat    : "yy-mm-dd"
         });
 
         $scope.searchClick();
@@ -29,7 +31,8 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
         var isoDate = date.toISOString();
 
         //정규 표현식으로 변환(MM/DD/YYYY)
-        result = isoDate.replace(/^(\d{4})\-(\d{2})\-(\d{2}).*$/, '$2/$3/$1');
+        //result = isoDate.replace(/^(\d{4})\-(\d{2})\-(\d{2}).*$/, '$2/$3/$1');
+        result = isoDate.replace(/^(\d{4})\-(\d{2})\-(\d{2}).*$/, '$1-$2-$3');
         return result;
     }
 
@@ -48,6 +51,9 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
     }
 
     $scope.searchClick = function (searchTag) {
+
+        $scope.selectedBadge = searchTag;
+
         $scope.cancleClick();
         if(searchTag == undefined) {
             $scope.searchTag = 'All';
@@ -143,7 +149,7 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
         $scope.sel_title = '';
         $scope.sel_tags = '';
         $scope.sel_id = '';
-        $scope.sel_due_date = formattedDate(subtractDate(new Date(), 0));
+        $scope.sel_start_date = formattedDate(subtractDate(new Date(), 0));
 
         $scope.sel_interval_val = "";
         $scope.sel_interval_unit = "";

@@ -17,7 +17,7 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/users/login');
 }
 
-router.post('/complete', function (req, res, next) {
+router.post('/complete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
@@ -44,7 +44,7 @@ router.post('/complete', function (req, res, next) {
 
 });
 
-router.post('/cancelComplete', function (req, res, next) {
+router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
@@ -76,21 +76,21 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
     var searchQeury;
     if(searchTags != 'All') {
         if(completeYn == 'y') {
-            searchQeury = {"contents": { "$regex": searchText }, "tags": searchTags };
+            searchQeury = {"contents": { "$regex": searchText }, "tags": searchTags, 'reg_id': req.user.name };
         } else {
-            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText }, "tags": searchTags };
+            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText }, "tags": searchTags, 'reg_id': req.user.name };
         }
     } else {
         if(completeYn == 'y') {
-            searchQeury = {"contents": { "$regex": searchText } };
+            searchQeury = {"contents": { "$regex": searchText }, 'reg_id': req.user.name };
         } else {
-            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText } };
+            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText }, 'reg_id': req.user.name };
         }
     }
 
     async.parallel([
         function(callback) {
-            test_cols.distinct('tags', function (err, categories) {
+            test_cols.distinct('tags', {'reg_id': req.user.name}, function (err, categories) {
                 callback(null, categories.sort());
             });
         },
@@ -111,7 +111,7 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
 
 }
 
-router.post('/search', function (req, res, next) {
+router.post('/search', ensureAuthenticated, function (req, res, next) {
     searchHandler(req, res, next);
 });
 
@@ -123,9 +123,10 @@ function searchHandler(req, res, next) {
     doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn);
 }
 
-router.post('/save', function (req, res, next) {
+router.post('/savePost', ensureAuthenticated, function (req, res, next) {
     // get form values
     var selContents = req.body.sel_contents;
+    var selTitle = req.body.sel_title;
     var selTags = req.body.sel_tags;
     var selId = req.body.sel_id;
 
@@ -138,20 +139,25 @@ router.post('/save', function (req, res, next) {
     if (selId == '') {
         test_cols.insert({
             "contents": selContents,
+            "title": selTitle,
             "tags": selTags,
             "reg_date": new Date(),
             "edit_date": new Date(),
             "due_date": selDueDate,
             "notice_bool": selNoticeBool == "on" ? true : false,
-            "complete" : "n"
+            "complete" : "n",
+            'reg_id': req.user.name
         }, function (err, test_cols) {
             if (err) {
                 res.send('There was an issue submitting the post');
             } else {
                 req.flash('success', 'Post Submitted');
-                res.location('/memo');
-                res.redirect('/memo');
-                // searchHandler(req, res, next);
+                // res.jsonp({
+                //                 "error_code": 0
+                //             });
+                // res.location('/memo');
+                // res.redirect('/memo');
+                searchHandler(req, res, next);
             }
         });
     } else {
@@ -161,6 +167,7 @@ router.post('/save', function (req, res, next) {
             {
                 $set: {
                     "contents": selContents,
+                    "title": selTitle,
                     "tags": selTags,
                     "reg_date": new Date(),
                     "edit_date": new Date(),
@@ -173,11 +180,14 @@ router.post('/save', function (req, res, next) {
                     throw err;
                 } else {
                     req.flash('success', 'Comment Added');
+                    // res.jsonp({
+                    //                 "error_code": 0
+                    //             });
                     // // res.location('/posts/show/'+selId);
                     // // res.redirect('/posts/show/'+selId);
-                    res.location('/memo');
-                    res.redirect('/memo');
-                    // searchHandler(req, res, next);
+                    // res.location('/memo');
+                    // res.redirect('/memo');
+                    searchHandler(req, res, next);
                 }
             }
             );

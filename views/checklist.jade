@@ -28,7 +28,7 @@ block content
         .row
             .col-md-12
                 span.badge(style="cursor:pointer", ng-click='searchClick("All")') All
-                span.badge(style="cursor:pointer", ng-repeat="item in keywords", ng-click="searchClick(item)") {{item}}
+                span.badge(style="cursor:pointer", ng-repeat="item in keywords", ng-click="searchClick(item)", ng-class="{'selected-badge': item == selectedBadge}") {{item}}
         br
         .row
             .col-md-12
@@ -38,14 +38,14 @@ block content
                             th #
                             th Title
                             th Tags
-                            th Edit date
+                            th.un Edit date
                         tbody
                             tr(ng-repeat="item in test_cols", style="cursor:pointer", ng-click='rowClick($index)')
                                 td(id='col_index_{{$index}}') {{((curPage - 1) * perPage) + $index + 1}}
                                 td(id='col_title_{{$index}}') {{item.title}}
                                 td(id='col_tags_{{$index}}')
                                     span.badge {{item.tags}}
-                                td(id='col_date_{{$index}}') {{item.edit_date}}
+                                td.un(id='col_date_{{$index}}') {{item.edit_date}}
         form.form-inline(method='post', action='/checklist/next')
             .form-group
                 .row
@@ -67,17 +67,17 @@ block content
                                 thead
                                     th #
                                     th Due date
-                                    th Description
-                                    th Done date
+                                    th.un Description
+                                    th.un Done date
                                     th
                                 tbody
                                     tr(ng-repeat="item in chklstDtl")
                                         td {{$index + 1}}
                                         td
-                                            input.date_picker.form-f21(style="width: 100%", type='text', ng-model='item.due_date', placeholder='mm/dd/yyyy', ng-disabled='{{item.done_bool}}')
-                                        td
+                                            input.date_picker.form-f21(style="width: 100%", type='text', ng-model='item.due_date', placeholder='yyyy-mm-dd', ng-disabled='{{item.done_bool}}')
+                                        td.un
                                             input.form-control(type='text', ng-model='item.desc', style="height: 28px", ng-disabled='{{item.done_bool}}')
-                                        td {{item.done_date}}
+                                        td.un {{item.done_date}}
                                         td
                                             input.btn.btn-default(type='button',value='Done', ng-hide='item.done_bool', ng-click="completeChklst($index, item.due_date, item.desc)")
                     .col-md-12
@@ -85,8 +85,8 @@ block content
                         input.form-control(id='id_sel_tags', name='sel_tags', type='text', ng-model='sel_tags', style="width: 100%")
                     .col-md-12
                         label Start date: &nbsp
-                        input.date_picker.form-f21(type='text', ng-model='sel_start_date', name='sel_start_date', placeholder='mm/dd/yyyy', ng-show='isItNew')
-                        input.form-f21(type='text', ng-model='sel_start_date', ng-hide='isItNew', disabled='true')
+                        input.date_picker.form-f21(type='text', ng-model='sel_start_date', name='sel_start_date', placeholder='yyyy-mm-dd', ng-show='isItNew', style='width: 100%')
+                        input.form-f21(type='text', ng-model='sel_start_date', ng-hide='isItNew', disabled='true', style='width: 100%')
                         .checkbox
                             label
                                 input(type="checkbox", ng-model="sel_notice_bool", name='sel_notice_bool')
