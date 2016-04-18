@@ -69,8 +69,8 @@ function zeroPad(num, places) {
 }
 
 function convertDateFormat(date) {
-    return zeroPad(date.getMonth() + 1, 2) + '/' + zeroPad(date.getDate(), 2) + '/' + date.getFullYear()
-
+    //return zeroPad(date.getMonth() + 1, 2) + '/' + zeroPad(date.getDate(), 2) + '/' + date.getFullYear()
+    return date.getFullYear() + '-' + zeroPad(date.getMonth() + 1, 2) + '-' + zeroPad(date.getDate(), 2);
 }
 
 router.post('/complete', function (req, res, next) {
