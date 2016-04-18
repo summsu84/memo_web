@@ -3,6 +3,7 @@ var router = express.Router();
 var perPage = 5;
 var url = require('url');
 var async = require('async');
+var ObjectID = require('mongodb').ObjectID;
 
 router.get('/', ensureAuthenticated, function (req, res, next) {
     res.render('memo', {
@@ -115,6 +116,20 @@ router.post('/search', ensureAuthenticated, function (req, res, next) {
     searchHandler(req, res, next);
 });
 
+router.post('/searchDetail', ensureAuthenticated, function (req, res, next) {
+  var db = req.db;
+  var test_cols = db.get('memo');
+  var selId = new ObjectID(req.body.sel_id);
+
+  test_cols.find({_id: selId},
+      function (err, test_cols) {
+          res.jsonp({
+                          "detailObj": test_cols
+                      });
+      });
+
+});
+
 function searchHandler(req, res, next) {
     var searchText = req.body.searchText === undefined ? '' : req.body.searchText;
     var pageNo = req.body.pageNo === undefined ? 1 : req.body.pageNo;
@@ -144,14 +159,14 @@ router.post('/savePost', ensureAuthenticated, function (req, res, next) {
             "reg_date": new Date(),
             "edit_date": new Date(),
             "due_date": selDueDate,
-            "notice_bool": selNoticeBool == "on" ? true : false,
+            "notice_bool": selNoticeBool,
             "complete" : "n",
             'reg_id': req.user.name
         }, function (err, test_cols) {
             if (err) {
                 res.send('There was an issue submitting the post');
             } else {
-                req.flash('success', 'Post Submitted');
+                // req.flash('success', 'Post Submitted');
                 // res.jsonp({
                 //                 "error_code": 0
                 //             });
@@ -172,14 +187,14 @@ router.post('/savePost', ensureAuthenticated, function (req, res, next) {
                     "reg_date": new Date(),
                     "edit_date": new Date(),
                     "due_date": selDueDate,
-                    "notice_bool": selNoticeBool == "on" ? true : false
+                    "notice_bool": selNoticeBool
                 }
             },
             function (err, doc) {
                 if (err) {
                     throw err;
                 } else {
-                    req.flash('success', 'Comment Added');
+                    //req.flash('success', 'Comment Added');
                     // res.jsonp({
                     //                 "error_code": 0
                     //             });
