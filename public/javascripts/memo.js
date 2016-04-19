@@ -1,4 +1,4 @@
-var obj_NgApp = angular.module('app_memo', ['ngRoute']);
+var obj_NgApp = angular.module('app_memo', ['ngRoute', 'ui.bootstrap']);
 
 obj_NgApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
@@ -15,7 +15,13 @@ obj_NgApp.config(['$routeProvider', function($routeProvider) {
         });
 }]);
 
-obj_NgApp.controller('ctr_memoDtl', ['$scope', '$routeParams', '$http', '$document', '$location', function ($scope, $routeParams, $http, $document, $location) {
+obj_NgApp.factory("sharedDObj", function () {
+    return {};
+});
+
+obj_NgApp.controller('ctr_memoDtl', ['$scope', '$routeParams', '$http', '$document', '$location', function ($scope, $routeParams, $http, $document, $location, sharedDObj) {
+
+    $scope.sharedDObj = sharedDObj;
 
     var baseUrl = '/memo';
 
@@ -123,10 +129,14 @@ obj_NgApp.controller('ctr_memoDtl', ['$scope', '$routeParams', '$http', '$docume
 
 }]);
 
-obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window, $location) {
+obj_NgApp.controller('ctr_memo', function ($scope, $http, sharedDObj, $document, $window, $location) {
+
+    $scope.sharedDObj = sharedDObj;
 
     var baseUrl = '/memo';
 
+    $scope.total_cnt = 0;
+    $scope.maxPaginationPerPage = 5;
     $scope.curPage = 1;
     $scope.perPage = 5;
     $scope.completeBool = true;
@@ -134,6 +144,8 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window, $l
     $scope.selectedBadge = '';
 
     $document.ready(function () {
+
+        $scope.searchTag = $scope.sharedDObj.searchCriteria != undefined ? $scope.sharedDObj.searchCriteria.searchTags : undefined;
 
         $( "#inp_date" ).datepicker({
           defaultDate: "",
@@ -143,7 +155,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window, $l
           dateFormat    : "yy-mm-dd"
         });
 
-        $scope.searchClick();
+        $scope.searchClick($scope.searchTag);
 
     });
 
@@ -173,10 +185,20 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window, $l
         // $scope.cancleClick();
         if(searchTag == undefined) {
             $scope.searchTag = 'All';
+            // $scope.sharedDObj.searchCriteria.searchTags = 'All';
         } else {
             $scope.searchTag = searchTag;
+
         }
+        if($scope.sharedDObj.searchCriteria != undefined) {
+            $scope.sharedDObj.searchCriteria.searchTags = searchTag;
+        }
+
         $scope.curPage = 1;
+        searchHanlder();
+    }
+
+    $scope.pageChanged = function() {
         searchHanlder();
     }
 
@@ -224,6 +246,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window, $l
     function searchResultHandler(returnData) {
         $scope.test_cols = returnData.test_cols;
         $scope.keywords = returnData.keywords;
+        $scope.total_cnt = returnData.total_cnt;
     }
 
     function searchHanlder() {
@@ -254,6 +277,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window, $l
     }
 
     $scope.newPostClick = function () {
+        $scope.sharedDObj.searchCriteria = returnSearchCriteria();
         $location.path('/detail/' + 'N');
     }
 
@@ -262,6 +286,7 @@ obj_NgApp.controller('ctr_memo', function ($scope, $http, $document, $window, $l
         //     $location.url('/list');
         //     $('#summernote').summernote('destroy');
         // } else {
+            $scope.sharedDObj.searchCriteria = returnSearchCriteria();
             $location.path('/detail/' + $scope.test_cols[idx]._id);
         // }
     }
