@@ -28,7 +28,7 @@ router.post('/complete', ensureAuthenticated, function (req, res, next) {
         },
             {
                 $set: {
-                    "complete": 'y'
+                    "complete": true
                 }
             },
             function (err, doc) {
@@ -58,7 +58,7 @@ router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
         },
             {
                 $set: {
-                    "complete": 'n'
+                    "complete": false
                 }
             },
             function (err, doc) {
@@ -77,21 +77,21 @@ router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
             );
 });
 
-function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
+function doJsonSearch(req, res, searchText, searchTags, curPage, completeBool) {
     var db = req.db;
     var test_cols = db.get('memo');
     var searchQeury;
     if(searchTags != 'All') {
-        if(completeYn == 'y') {
-            searchQeury = {"contents": { "$regex": searchText }, "tags": searchTags, 'reg_id': req.user.name };
+        if(completeBool) {
+            searchQeury = { "$or": [{"title": { "$regex": searchText }}, {"contents": { "$regex": searchText }}], "tags": searchTags, 'reg_id': req.user.name };
         } else {
-            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText }, "tags": searchTags, 'reg_id': req.user.name };
+            searchQeury = {"complete": {"$ne": true}, "$or": [{"title": { "$regex": searchText }}, {"contents": { "$regex": searchText }}], "tags": searchTags, 'reg_id': req.user.name };
         }
     } else {
-        if(completeYn == 'y') {
-            searchQeury = {"contents": { "$regex": searchText }, 'reg_id': req.user.name };
+        if(completeBool) {
+            searchQeury = { "$or": [{"title": { "$regex": searchText }}, {"contents": { "$regex": searchText }}], 'reg_id': req.user.name };
         } else {
-            searchQeury = {"complete": {"$ne": 'y'}, "contents": { "$regex": searchText }, 'reg_id': req.user.name };
+            searchQeury = {"complete": {"$ne": true}, "$or": [{"title": { "$regex": searchText }}, {"contents": { "$regex": searchText }}], 'reg_id': req.user.name };
         }
     }
     // var searchFields = {_id: 1, tags: 1, title: 1, edit_date: 1, contents: 0, reg_date: 0, complete: 0, due_date: 0, notice_bool: 0, reg_id: 0};
@@ -104,7 +104,7 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
             });
         },
         function(callback) {
-            test_cols.find(searchQeury, { fields: searchFields, sort: { edit_date: -1 }, skip: (pageNo - 1) * perPage, limit: perPage },
+            test_cols.find(searchQeury, { fields: searchFields, sort: { edit_date: -1 }, skip: (curPage - 1) * perPage, limit: perPage },
                 function (err, test_cols) {
                     callback(null, test_cols);
                 });
@@ -118,7 +118,7 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
     ], function(err, results) {
         res.jsonp({
                         "test_cols": results[1],
-                        'pageNo': pageNo,
+                        'curPage': curPage,
                         'keywords': results[0],
                         'searchText': searchText,
                         'total_cnt': results[2]
@@ -147,10 +147,10 @@ router.post('/searchDetail', ensureAuthenticated, function (req, res, next) {
 
 function searchHandler(req, res, next) {
     var searchText = req.body.searchText === undefined ? '' : req.body.searchText;
-    var pageNo = req.body.pageNo === undefined ? 1 : req.body.pageNo;
+    var curPage = req.body.curPage === undefined ? 1 : req.body.curPage;
     var searchTags = req.body.searchTags === undefined ? 'All' : req.body.searchTags;
-    var completeYn = req.body.completeYn === undefined ? 'y' : req.body.completeYn;
-    doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn);
+    var completeBool = req.body.completeBool === undefined ? false : req.body.completeBool;
+    doJsonSearch(req, res, searchText, searchTags, curPage, completeBool);
 }
 
 router.post('/savePost', ensureAuthenticated, function (req, res, next) {

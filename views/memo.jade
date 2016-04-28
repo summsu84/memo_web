@@ -26,19 +26,19 @@ block content
                                 label Search words:&nbsp
                                 input.form-control(id='id_searchText', name='id_searchText',
                                     ng-keyup="$event.keyCode == 13 ? searchClick() : null",
-                                    type='text', placeholder='Search words...', ng-model='searchText')
+                                    type='text', placeholder='Search words...', ng-model='sharedDObj.searchText')
                                 .checkbox
                                     label
-                                        input(type="checkbox", ng-model="completeBool")
+                                        input(type="checkbox", ng-model="sharedDObj.completeBool")
                                         |&nbsp;exclude complete&nbsp;
                                 input.btn.btn-default(type='button', value='Search', ng-click='searchClick()')
                                 input.btn.btn-default(type='button',value='New post', ng-click='newPostClick()')
-                                label &nbsp;total count: &nbsp;{{total_cnt}}
+                                label &nbsp;total count: &nbsp;{{sharedDObj.total_cnt}}
                 br
                 .row
                     .col-md-12
                         span.badge(style="cursor:pointer", ng-click='searchClick("All")') All
-                        span.badge(style="cursor:pointer", ng-repeat="item in keywords", ng-click="searchClick(item)", ng-class="{'selected-badge': item == sharedDObj.searchCriteria.searchTags}") {{item}}
+                        span.badge(style="cursor:pointer", ng-repeat="item in keywords", ng-click="searchClick(item)", ng-class="{'selected-badge': item == sharedDObj.searchTag}") {{item}}
 
                 .table-responsive
                     table.table.mytable
@@ -49,14 +49,14 @@ block content
                             th.un Edit date
                         tbody
                             tr(ng-repeat="item in test_cols", style="cursor:pointer", ng-click='rowClick($index)')
-                                td(id='col_index_{{$index}}') {{((curPage - 1) * perPage) + $index + 1}}
+                                td(id='col_index_{{$index}}') {{((sharedDObj.curPage - 1) * perPage) + $index + 1}}
                                 td(id='col_contents_{{$index}}') {{item.title}}
                                 td(id='col_tags_{{$index}}')
                                     span.badge {{item.tags}}
                                 td.un(id='col_date_{{$index}}') {{item.edit_date}}
 
                 div(style='text-align: center;')
-                    pagination.pagination-sm(boundary-links='true', total-items='total_cnt', ng-model='curPage', ng-change='pageChanged()', items-per-page='perPage', max-size='maxPaginationPerPage', previous-text='‹', next-text='›', first-text='«', last-text='»')
+                    pagination.pagination-sm(boundary-links='true', total-items='total_cnt', ng-model='sharedDObj.curPage', ng-change='pageChanged()', items-per-page='perPage', max-size='maxPaginationPerPage', previous-text='‹', next-text='›', first-text='«', last-text='»')
 
             script(type='text/ng-template', id='detail.html')
                 form.form-inline(method='post', action='/memo/save')
@@ -82,7 +82,7 @@ block content
                                 input.btn.btn-default(type='button',value='Save', ng-click='savePost()')
                                 input.btn.btn-default(type='button',value='Complete', ng-click='completeClick(sel_id)', ng-hide="!completeButtonBool || sel_id == ''")
                                 input.btn.btn-default(type='button',value='Cancel Completion', ng-click='cancelCompletionClick(sel_id)', ng-hide="completeButtonBool || sel_id == ''")
-                                input.btn.btn-default(type='button',value='Cancel', ng-click='cancleClick()')
+                                input.btn.btn-default(type='button',value='Cancel', ng-click='cancleClickAtDetail()')
                                 input.form-control(name='sel_id', type='text', ng-model='sel_id', ng-hide='true')
 
     script(src='/javascripts/memo.js')
