@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title #{title}: Express website
+    title #{title}: PIMS
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
@@ -21,7 +21,7 @@ html
                     span.icon-bar
                     span.icon-bar
                     span.icon-bar
-                a.navbar-brand(href='#') Express Website
+                a.navbar-brand(href='#') PIMS
             #navbar.collapse.navbar-collapse
                 ul.nav.navbar-nav
                     if user
@@ -33,6 +33,9 @@ html
                     if user
                       li(class=(title === 'Memo' ? 'active' : ''))
                           a(href='/memo') Memo
+                    if user
+                      li(class=(title === 'Todo' ? 'active' : ''))
+                          a(href='/todo') Todo
                     if user
                       li(class=(title === 'Checklist' ? 'active' : ''))
                           a(href='/checklist') Checklist

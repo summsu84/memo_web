@@ -1,11 +1,20 @@
-var obj_NgApp = angular.module('app_checklist', []);
+var obj_NgApp = angular.module('app_checklist', ['ngRateIt', 'ui.bootstrap']);
 
 obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $window) {
 
     var baseUrl = '/checklist';
 
-    $scope.curPage = 1;
+    $scope.sharedDObj = {};
+    $scope.sharedDObj.total_cnt = 0;
+    $scope.sharedDObj.curPage = 1;
+    $scope.maxPaginationPerPage = 5;
     $scope.perPage = 5;
+
+    $scope.pageChanged = function() {
+        $scope.cancleClick();
+        searchHanlder();
+    }
+
     $scope.completeBool = true;
 
     $scope.editViewBool = false;
@@ -101,13 +110,14 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
             addDataObj(jQuery, dataObj, "searchTags", $scope.searchTag);
         }
         addDataObj(jQuery, dataObj, "completeYn", $scope.completeBool == true ? 'n' : 'y');
-        addDataObj(jQuery, dataObj, "pageNo", $scope.curPage);
+        addDataObj(jQuery, dataObj, "pageNo", $scope.sharedDObj.curPage);
         return dataObj;
     }
 
     function searchResultHandler(returnData) {
         $scope.test_cols = returnData.test_cols;
         $scope.keywords = returnData.keywords;
+        $scope.sharedDObj.total_cnt = returnData.total_cnt;
     }
 
     function searchHanlder() {
@@ -148,6 +158,7 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
         $scope.editViewBool = true;
         $scope.sel_title = '';
         $scope.sel_tags = '';
+        $scope.sel_rating = 0;
         $scope.sel_id = '';
         $scope.sel_start_date = formattedDate(subtractDate(new Date(), 0));
 
@@ -191,6 +202,7 @@ obj_NgApp.controller('ctr_checklist', function ($scope, $http, $document, $windo
             $scope.selInx = idx;
             $scope.sel_title = $scope.test_cols[idx].title;
             $scope.sel_tags = $scope.test_cols[idx].tags;
+            $scope.sel_rating = $scope.test_cols[idx].rating;
             $scope.sel_id = $scope.test_cols[idx]._id;
             $scope.sel_notice_bool = $scope.test_cols[idx].notice_bool;
             $scope.sel_start_date = $scope.test_cols[idx].start_date;

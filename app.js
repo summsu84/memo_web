@@ -51,6 +51,7 @@ app.use(session({
 var routes = require('./routes/index');
 var about = require('./routes/about');
 var memo = require('./routes/memo');
+var todo = require('./routes/todo');
 var checklist = require('./routes/checklist');
 var users = require('./routes/users');
 
@@ -94,6 +95,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/about', about);
 app.use('/memo', memo);
+app.use('/todo', todo);
 app.use('/checklist', checklist);
 app.use('/users', users);
 

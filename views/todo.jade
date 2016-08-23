@@ -9,11 +9,11 @@ block content
 
     script(src='http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.js')
     link(rel='stylesheet', href='http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.1/summernote.css')
-    
     script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.28//angular-route.min.js')
+
     script(src='/javascripts/ui-bootstrap-tpls-0.11.0.min.js')
-    
-    .container(ng-controller="ctr_memo", ng-app='app_memo' ng-cloak='')
+
+    .container(ng-controller="ctr_todo", ng-app='app_todo' ng-cloak='')
         .row
             .col-md-12
                 ng-view Loading...
@@ -59,7 +59,7 @@ block content
                     pagination.pagination-sm(boundary-links='true', total-items='sharedDObj.total_cnt', ng-model='sharedDObj.curPage', ng-change='pageChanged()', items-per-page='perPage', max-size='maxPaginationPerPage', previous-text='‹', next-text='›', first-text='«', last-text='»')
 
             script(type='text/ng-template', id='detail.html')
-                form.form-inline(method='post', action='/memo/save')
+                form.form-inline(method='post', action='/todo/save')
                     .form-group
                         .row(id='id_editComp')
                             .col-md-12
@@ -85,4 +85,4 @@ block content
                                 input.btn.btn-default(type='button',value='Cancel', ng-click='cancleClickAtDetail()')
                                 input.form-control(name='sel_id', type='text', ng-model='sel_id', ng-hide='true')
 
-    script(src='/javascripts/memo.js')
+    script(src='/javascripts/todo.js')

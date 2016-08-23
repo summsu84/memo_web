@@ -6,8 +6,8 @@ var async = require('async');
 var ObjectID = require('mongodb').ObjectID;
 
 router.get('/', ensureAuthenticated, function (req, res, next) {
-    res.render('memo', {
-        "title": 'Memo'
+    res.render('todo', {
+        "title": 'todo'
     });
 });
 
@@ -22,7 +22,7 @@ router.post('/complete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
-    var test_cols = db.get('memo');
+    var test_cols = db.get('todo');
     test_cols.update({
             "_id": selId
         },
@@ -39,8 +39,8 @@ router.post('/complete', ensureAuthenticated, function (req, res, next) {
                     res.jsonp({
                                     "error_code": 0
                                 });
-                    // res.location('/memo');
-                    // res.redirect('/memo');
+                    // res.location('/todo');
+                    // res.redirect('/todo');
                     // searchHandler(req, res, next);
                 }
             }
@@ -52,7 +52,7 @@ router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
-    var test_cols = db.get('memo');
+    var test_cols = db.get('todo');
     test_cols.update({
             "_id": selId
         },
@@ -69,8 +69,8 @@ router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
                     res.jsonp({
                                     "error_code": 0
                                 });
-                    // res.location('/memo');
-                    // res.redirect('/memo');
+                    // res.location('/todo');
+                    // res.redirect('/todo');
                     // searchHandler(req, res, next);
                 }
             }
@@ -79,7 +79,7 @@ router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
 
 function doJsonSearch(req, res, searchText, searchTags, curPage, completeBool) {
     var db = req.db;
-    var test_cols = db.get('memo');
+    var test_cols = db.get('todo');
     var searchQeury;
     if(searchTags != 'All') {
         if(completeBool) {
@@ -133,7 +133,7 @@ router.post('/search', ensureAuthenticated, function (req, res, next) {
 
 router.post('/searchDetail', ensureAuthenticated, function (req, res, next) {
   var db = req.db;
-  var test_cols = db.get('memo');
+  var test_cols = db.get('todo');
   var selId = new ObjectID(req.body.sel_id);
 
   test_cols.find({_id: selId},
@@ -164,7 +164,7 @@ router.post('/savePost', ensureAuthenticated, function (req, res, next) {
     var selNoticeBool = req.body.sel_notice_bool;
 
     var db = req.db;
-    var test_cols = db.get('memo');
+    var test_cols = db.get('todo');
 
     if (selId == '') {
         test_cols.insert({
@@ -185,8 +185,8 @@ router.post('/savePost', ensureAuthenticated, function (req, res, next) {
                 // res.jsonp({
                 //                 "error_code": 0
                 //             });
-                // res.location('/memo');
-                // res.redirect('/memo');
+                // res.location('/todo');
+                // res.redirect('/todo');
                 searchHandler(req, res, next);
             }
         });
@@ -215,8 +215,8 @@ router.post('/savePost', ensureAuthenticated, function (req, res, next) {
                     //             });
                     // // res.location('/posts/show/'+selId);
                     // // res.redirect('/posts/show/'+selId);
-                    // res.location('/memo');
-                    // res.redirect('/memo');
+                    // res.location('/todo');
+                    // res.redirect('/todo');
                     searchHandler(req, res, next);
                 }
             }

@@ -77,8 +77,8 @@ router.post('/complete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
-    var test_cols = db.get('checklist');
-    test_cols.update({
+    var checklistMaster = db.get('checklist');
+    checklistMaster.update({
         "_id": selId
     },
         {
@@ -104,8 +104,8 @@ router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
     var selId = req.body.sel_id;
 
     var db = req.db;
-    var test_cols = db.get('checklist');
-    test_cols.update({
+    var checklistMaster = db.get('checklist');
+    checklistMaster.update({
         "_id": selId
     },
         {
@@ -128,16 +128,16 @@ router.post('/cancelComplete', ensureAuthenticated, function (req, res, next) {
 
 router.post('/searchDetail', ensureAuthenticated, function (req, res, next) {
     var db = req.db;
-    var test_cols = db.get('checklistDtl');
+    var checklistDtl = db.get('checklistDtl');
     var searchQeury;
     var _id = req.body.chklst_id === undefined ? '' : req.body.chklst_id;
     var objectId = new ObjectID(_id);
     searchQeury = { "chklst_id": objectId, 'reg_id': req.user.name };
 
-    test_cols.find(searchQeury, { sort: { done_bool: 1, due_date: -1 }, limit: 3 },
-        function (err, test_cols) {
+    checklistDtl.find(searchQeury, { sort: { done_bool: 1, due_date: -1 }, limit: 3 },
+        function (err, returnData) {
             res.jsonp({
-                "chklstDtl": test_cols
+                "chklstDtl": returnData
             });
         }
         );
@@ -146,7 +146,7 @@ router.post('/searchDetail', ensureAuthenticated, function (req, res, next) {
 
 function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
     var db = req.db;
-    var test_cols = db.get('checklist');
+    var checklistMaster = db.get('checklist');
     var searchQeury;
     if (searchTags != 'All') {
         if (completeYn == 'y') {
@@ -164,14 +164,20 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
 
     async.parallel([
         function (callback) {
-            test_cols.distinct('tags', {'reg_id': req.user.name}, function (err, categories) {
+            checklistMaster.distinct('tags', {'reg_id': req.user.name}, function (err, categories) {
                 callback(null, categories.sort());
             });
         },
         function (callback) {
-            test_cols.find(searchQeury, { sort: { edit_date: -1 }, skip: (pageNo - 1) * perPage, limit: perPage },
-                function (err, test_cols) {
-                    callback(null, test_cols);
+            checklistMaster.find(searchQeury, { sort: { rating: -1 }, skip: (pageNo - 1) * perPage, limit: perPage },
+                function (err, returnData) {
+                    callback(null, returnData);
+                });
+        },
+        function(callback) {
+            checklistMaster.count(searchQeury,
+                function (err, cnt) {
+                    callback(null, cnt);
                 });
         }
     ], function (err, results) {
@@ -179,7 +185,8 @@ function doJsonSearch(req, res, searchText, searchTags, pageNo, completeYn) {
             "test_cols": results[1],
             'pageNo': pageNo,
             'keywords': results[0],
-            'searchText': searchText
+            'searchText': searchText,
+            'total_cnt': results[2]
         });
     });
 
@@ -286,6 +293,7 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
     var selTitle = req.body.sel_title;
     var selTags = req.body.sel_tags;
     var selId = req.body.sel_id;
+    var selRating = req.body.sel_rating;
 
     var selStartDate = req.body.sel_start_date;
     var selNoticeBool = req.body.sel_notice_bool;
@@ -294,13 +302,13 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
     var selIntervalUnit = req.body.sel_interval_unit;
 
     var db = req.db;
-    var test_cols = db.get('checklist');
+    var checklistMaster = db.get('checklist');
     var checklistDtl = db.get('checklistDtl');
 
     async.parallel([
         function (callback) {
             if (selId == '') {
-                test_cols.insert({
+                checklistMaster.insert({
                     "title": selTitle,
                     "tags": selTags,
                     "start_date": selStartDate,
@@ -310,7 +318,8 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
                     "interval_val": selIntervalVal,
                     "interval_unit": selIntervalUnit,
                     "complete" : "n",
-                    'reg_id': req.user.name
+                    'reg_id': req.user.name,
+                    "rating": selRating
                 }, function (err, doc) {
                     if (err) {
                         res.send('There was an issue submitting the post');
@@ -319,7 +328,7 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
                     }
                 });
             } else {
-                test_cols.update({
+                checklistMaster.update({
                     "_id": selId
                 },
                     {
@@ -331,7 +340,8 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
                             "edit_date": new Date(),
                             "notice_bool": selNoticeBool == "on" ? true : false,
                             "interval_val": selIntervalVal,
-                            "interval_unit": selIntervalUnit
+                            "interval_unit": selIntervalUnit,
+                            "rating": selRating
                         }
                     },
                     function (err, doc) {
@@ -353,15 +363,14 @@ router.post('/save', ensureAuthenticated, function (req, res, next) {
                 "reg_date": new Date(),
                 "done_bool": false,
                 'reg_id': req.user.name
-            }, function (err, test_cols) {
+            }, function (err, returnData) {
                 if (err) {
                     res.send('There was an issue submitting the post');
                 } else {
                     res.location('/checklist');
                     res.redirect('/checklist');
                 }
-            }
-                );
+            });
         } else {
             res.location('/checklist');
             res.redirect('/checklist');

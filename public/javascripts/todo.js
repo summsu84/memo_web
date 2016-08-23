@@ -1,30 +1,31 @@
-var obj_NgApp = angular.module('app_memo', ['ngRoute', 'ui.bootstrap']);
+var obj_NgApp = angular.module('app_todo', ['ngRoute', 'ui.bootstrap']);
 
-obj_NgApp.config(['$routeProvider', function($routeProvider, $httpProvider) {
+obj_NgApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
         when('/list', {
           templateUrl: 'list.html',
-          controller: 'ctr_memo'
+          controller: 'ctr_todo'
         }).
         when('/detail/:idx', {
           templateUrl: 'detail.html',
-          controller: 'ctr_memoDtl'
+          controller: 'ctr_todoDtl'
         }).
         otherwise({
           redirectTo: '/list'
         });
-    
 }]);
 
 obj_NgApp.factory("sharedDObj", function () {
     return {total_cnt: 0, curPage: 1, searchTag: '', completeBool: '', searchText: ''};
 });
 
-obj_NgApp.controller('ctr_memoDtl', ['$scope', '$routeParams', '$http', '$document', '$location', 'sharedDObj', function ($scope, $routeParams, $http, $document, $location, sharedDObj) {
+   
+
+obj_NgApp.controller('ctr_todoDtl', ['$scope', '$routeParams', '$http', '$document', '$location', 'sharedDObj', function ($scope, $routeParams, $http, $document, $location, sharedDObj) {
 
     $scope.sharedDObj = sharedDObj;
 
-    var baseUrl = '/memo';
+    var baseUrl = '/todo';
 
     $( "#inp_date" ).datepicker({
       defaultDate: "",
@@ -167,11 +168,11 @@ obj_NgApp.controller('ctr_memoDtl', ['$scope', '$routeParams', '$http', '$docume
 
 }]);
 
-obj_NgApp.controller('ctr_memo', ['$scope', '$routeParams', '$http', '$document', '$location', 'sharedDObj', function ($scope, $routeParams, $http, $document, $location, sharedDObj) {
+obj_NgApp.controller('ctr_todo', ['$scope', '$routeParams', '$http', '$document', '$location', 'sharedDObj', function ($scope, $routeParams, $http, $document, $location, sharedDObj) {
 
     $scope.sharedDObj = sharedDObj;
 
-    var baseUrl = '/memo';
+    var baseUrl = '/todo';
 
     // because the value of $scope will be gone while $route's transition, some of values should be located in the data object of the factory
     $scope.maxPaginationPerPage = 5;
