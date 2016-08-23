@@ -74,10 +74,7 @@ block content
                             .col-md-12
                                 label Due date: &nbsp
                                 input#inp_date.form-f21(type='text', ng-model='sel_due_date', name='sel_due_date', placeholder='yyyy-mm-dd', style='width: 100%')
-                                .checkbox
-                                    label
-                                        input(type="checkbox", ng-model="sel_notice_bool", name='sel_notice_bool')
-                                        |&nbsp;use notice
+                                
                             .col-md-12
                                 input.btn.btn-default(type='button',value='Save', ng-click='savePost()')
                                 input.btn.btn-default(type='button',value='Complete', ng-click='completeClick(sel_id)', ng-hide="!completeButtonBool || sel_id == ''")
