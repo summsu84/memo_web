@@ -134,7 +134,7 @@ router.post('/searchDetail', ensureAuthenticated, function (req, res, next) {
     var objectId = new ObjectID(_id);
     searchQeury = { "trace_id": objectId, 'reg_id': req.user.name };
 
-    traceDtl.find(searchQeury, { sort: { done_bool: 1, due_date: -1 }, limit: 3 },
+    traceDtl.find(searchQeury, { sort: { done_bool: 1, due_date: -1 } },
         function (err, returnData) {
             res.jsonp({
                 "traceDtl": returnData
