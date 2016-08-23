@@ -53,6 +53,7 @@ var about = require('./routes/about');
 var memo = require('./routes/memo');
 var todo = require('./routes/todo');
 var checklist = require('./routes/checklist');
+var trace = require('./routes/trace');
 var users = require('./routes/users');
 
 // Passport
@@ -97,6 +98,7 @@ app.use('/about', about);
 app.use('/memo', memo);
 app.use('/todo', todo);
 app.use('/checklist', checklist);
+app.use('/trace', trace);
 app.use('/users', users);
 
 // catch 404 and forward to error handler

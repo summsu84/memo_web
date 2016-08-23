@@ -39,6 +39,9 @@ html
                     if user
                       li(class=(title === 'Checklist' ? 'active' : ''))
                           a(href='/checklist') Checklist
+                    if user
+                      li(class=(title === 'Trace' ? 'active' : ''))
+                          a(href='/trace') Trace
                     if !user
                       li(class=(title === 'Register' ? 'active' : ''))
                           a(href='/users/register') Register
