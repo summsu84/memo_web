@@ -1,9 +1,637 @@
 FORMAT: 1A
 HOST: http://polls.apiblueprint.org/
 
-# get-my-api-test
+# Flight Schedule Search Function API
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+스카이 스캐너 API 서비스를 이용하여 항공권 조회를 위한 커스텀 API 개발
+
+## 추천 항공편 [/itineray/recommend]
+
+### 추천 항공편 검색  [GET]
+
+랜덤 추천 항공권 검색.
+
++ Response 200 (application/json)
+
+        [
+            {
+                "question": "Favourite programming language?",
+                "published_at": "2015-08-05T08:40:51.620Z",
+                "choices": [
+                    {
+                        "choice": "Swift",
+                        "votes": 2048
+                    }, {
+                        "choice": "Python",
+                        "votes": 1024
+                    }, {
+                        "choice": "Objective-C",
+                        "votes": 512
+                    }, {
+                        "choice": "Ruby",
+                        "votes": 256
+                    }
+                ]
+            }
+        ]
+        
+        
+### 특정 날짜에 대한 추천 항공편 검색 [POST]
+
+특정 날짜에 대한 추천 항공편 검색
+
++ Request (application/json)
+
+        {
+            "inboundPartialDate" : "2017-09-20",
+            "outbountPartialDate" : "any",
+            "limitNumber"   : 3
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "sucess":{
+                    "code" : 200,
+                    "message" : "success"
+                },
+                "itineraies" : 
+                [
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    }
+                 
+                ]
+            }
+
+
+
+## 요일 별 항공권 검색 [/itineray/normal/date]
+
+### 요일 별 항공권 검색[POST]
+
+요일 별 항공권 검색.
+
++ Request (application/json)
+
+        {
+            "inboundPartialDate" : "2017-09-20",
+            "outbountPartialDate" : "2017-10-01",
+            "limitNumber"   : 3
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "sucess":{
+                    "code" : 200,
+                    "message" : "success"
+                },
+                "itineraies" : 
+                [
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    }
+                 
+                ]
+            }
+
+## 경로 별 항공권 검색 [/itineray/normal/route]
+
+### 경로 별 항공권 검색 [POST]
+
+경로 별 항공권 검색
+
++ Request (application/json)
+
+        {
+            "inboundPartialDate" : "2017-09-20",
+            "outbountPartialDate" : "2017-10-01",
+            "originPlace" : "서울",
+            "destinationPlace" : "부산"
+            "limitNumber"   : 3
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "sucess":{
+                    "code" : 200,
+                    "message" : "success"
+                },
+                "itineraies" : 
+                [
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    }
+                 
+                ]
+            }
+
+## 항공기 별 항공편 검색 [/itineray/normal/airplane]
+
+### 항공기 별 항공편 검색[POST]
+
+항공기 별 항공편 검색
+
++ Request (application/json)
+
+        {
+            "inboundPartialDate" : "2017-09-20",
+            "outbountPartialDate" : "2017-10-01",
+            "originPlace" : "서울",
+            "destinationPlace" : "부산"
+            "flightName" : "대한항공"
+            "limitNumber"   : 3
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "sucess":{
+                    "code" : 200,
+                    "message" : "success"
+                },
+                "itineraies" : 
+                [
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    }
+                 
+                ]
+            }
+
+
+
+## 요일 별 최저가 운임 항공권 검색 [/itineray/cheapness/date]
+
+### 요일 별 최저가 운임 항공권 검색[POST]
+
+요일 별 최저가 운임 항공권 검색.
+
++ Request (application/json)
+
+        {
+            "inboundPartialDate" : "2017-09-20",
+            "outbountPartialDate" : "2017-10-01",
+            "limitNumber"   : 3
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "sucess":{
+                    "code" : 200,
+                    "message" : "success"
+                },
+                "itineraies" : 
+                [
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    }
+                 
+                ]
+            }
+
+
+## 경로 별 최저가 운임 항공권 검색 [/itineray/cheapness/route]
+
+### 경로 별 최저가 운임 항공권 검색[POST]
+
+경로 별 최저가 운임 항공권 검색.
+
++ Request (application/json)
+
+        {
+            "inboundPartialDate" : "2017-09-20",
+            "outbountPartialDate" : "2017-10-01",
+            "originPlace" : "서울",
+            "destinationPlace" : "부산"
+            "limitNumber"   : 3
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "sucess":{
+                    "code" : 200,
+                    "message" : "success"
+                },
+                "itineraies" : 
+                [
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    },
+                    {
+                        "itinerayId" : 1,
+                        "Price" : 65300,
+                        "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                    }
+                 
+                ]
+            }
+
+## 평균 운임 검색 [/itineray/average]
+
+### 평균 운임 검색 [POST]
+
+평균 운임 검색
+
++ Request (application/json)
+
+        {
+            "inboundPartialDate" : "2017-09-20",
+            "outbountPartialDate" : "2017-10-01",
+            "originPlace" : "서울",
+            "destinationPlace" : "부산"
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "sucess":{
+                    "code" : 200,
+                    "message" : "success"
+                },
+                "price" : {
+                    "averagePrice" : 50000
+                    "minPrice" : 45000
+                    "maxPrice" : 60000
+                }
+                "OutboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "서울"
+                            "DestinatioCityName" : "부산"
+                            "DepartureDate" : "2017-08-22T:00:00:00"
+                        },
+                        "InboundLeg" : {
+                            "FlightName : [
+                                "대한항공(KAL)"
+                            ],
+                            "OriginCityName" : "부산"
+                            "DestinatioCityName" : "서울"
+                            "DepartureDate" : "2017-08-23T:00:00:00"
+                        }
+                
+                
+                
+            }
+
+
+
 
 ## Questions Collection [/questions]
 
